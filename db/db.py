@@ -1,8 +1,12 @@
-import pymysql
-import config
+# standard library imports
 from inspect import currentframe, getframeinfo
+
+# related third party imports
+import pymysql
+
+# local application/library specific imports
+import config
 import PSdebug
-from car import Car
 
 
 # TODO: User addition fields
@@ -36,7 +40,6 @@ class Database(object):
             with self.connection.cursor() as cursor:
                 # Create a new record
                 sql = "INSERT INTO `ParkingSystem`.`Log` (`Kenteken`, `endTime`, `filename`) VALUES (%s, '1111-11-11 11:11:11', %s);"
-                print(sql)
                 cursor.execute(
                     sql, (car.get_number_plate(), car.get_file_location()))
 
