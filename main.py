@@ -6,7 +6,3 @@
 
 
 
-# Setup start button
-#
-
-

@@ -8,11 +8,13 @@ import pymysql
 import config
 import PSdebug
 
+from car import Car
+
 
 # TODO: User addition fields
 # TODO: Check if number plate already in system to avoid fraud
 
-class Database(object):
+class Database:
     def __init__(self):
         self.frame = getframeinfo(currentframe())
         self.establish_connection()
@@ -35,7 +37,7 @@ class Database(object):
 
     # TODO: SQL injection prevention
     # TODO: Implement sanitazation earlier
-    def insert_record(self, car):
+    def insert_car(self, car):
         try:
             with self.connection.cursor() as cursor:
                 # Create a new record
@@ -48,7 +50,7 @@ class Database(object):
         except:
             print(PSdebug.get_linenumber())
 
-    def get_unreleased_car_record_by_number_plate(self, car):
+    def get_unreleased_car_record_by_car(self, car):
         try:
             with self.connection.cursor() as cursor:
                 sql = "select * from `Log` where `Kenteken` = %s and endTime = '1111-11-11 11:11:11'"
@@ -61,7 +63,7 @@ class Database(object):
         except:
             print(PSdebug.get_linenumber())
 
-    def set_unrealeased_car_to_released_by_number_plate(self, car):
+    def set_unrealeased_car_to_released_by_car(self, car):
         try:
             with self.connection.cursor() as cursor:
                 # TODO: REALLY NEED TO OPTIMIZE THIS, HIGH PRIORITY BACKLOG
@@ -76,7 +78,7 @@ class Database(object):
             print(PSdebug.get_linenumber())
 
     # TODO: Create dynamic variables
-    def get_released_car_duration_by_number_plate(self, car):
+    def get_released_car_duration_by_car(self, car):
         try:
             with self.connection.cursor() as cursor:
                 # Only want the amount of MINUTES, business rules need not be applied in query's
@@ -86,5 +88,44 @@ class Database(object):
 
                 # Returns the amount of minutes in a whole number i.e 60
                 return timeDifference['MINUTE']
+        except:
+            print(PSdebug.get_linenumber())
+
+    def get_car_by_number_plate(self, number_plate):
+        try:
+            with self.connection.cursor() as cursor:
+                # Acquiring all car data
+                sql = "SELECT * FROM `Log` WHERE `Kenteken` = %s)"
+                cursor.execute(sql, (number_plate))
+
+                return Car(cursor.fetchone())
+        except:
+            print(PSdebug.get_linenumber())
+
+    def insert_new_user_car_connection(self, number_plate, user_id):
+        """Inserting a new record in the connecting table between cars and users"""
+
+        # Acquiring the ID to connect both records
+        record_id_car = self.get_unreleased_car_record_by_number_plate()
+        query_var = (record_id_car, user_id)
+        try:
+            with self.connection.cursor() as cursor:
+                # insert query
+                sql = "INSERT INTO `ParkingLogin`(`idParking`, `idLogin`) VALUES(%s, %s);"
+                cursor.execute(sql, query_var)
+        except:
+            print(PSdebug.get_linenumber())
+
+    def insert_new_user(self, user):
+        """
+        Two Query's -> Adding a new record to the user table and a new connection to a number plate
+        Will be done using a transaction to be error correcting
+        """
+        try:
+            with self.connection.cursor() as cursor:
+                sql = "INSERT INTO `ParkingSystem`.`Login` (`name`, `email`, `streetname`, `postalcode`, `number`, `city`, `country`) VALUES(%s, %s, %s, %s, %s, %s, %s)"
+                query_var = (user.get_invoice_data())
+                cursor.execute(sql, query_var)
+                self.insert_new_user_car_connection(user.get_number_plate(), cursor.lastrowid)
         except:
             print(PSdebug.get_linenumber())
