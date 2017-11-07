@@ -37,7 +37,8 @@ class Database(object):
                 # Create a new record
                 sql = "INSERT INTO `ParkingSystem`.`Log` (`Kenteken`, `endTime`, `filename`) VALUES (%s, '1111-11-11 11:11:11', %s);"
                 print(sql)
-                cursor.execute(sql, (car.get_number_plate(), car.get_file_location()))
+                cursor.execute(
+                    sql, (car.get_number_plate(), car.get_file_location()))
 
             # connection is not autocommit by default. So you must commit to save
             # your changes.
