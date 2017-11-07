@@ -1,3 +1,12 @@
-from pyrdw import pyrdw
 
-print(pyrdw.get('86-TJ-ZL'))
+
+# flow
+# Check if database connection can be established
+
+
+
+
+# Setup start button
+#
+
+

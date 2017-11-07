@@ -19,3 +19,7 @@ class Car:
 
     def get_file_location(self):
         return self.file_location
+
+    # Should be unavoided, but unavoidable
+    def get_undefined_value(self, key):
+        return getattr(self, key)
