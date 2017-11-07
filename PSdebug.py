@@ -6,6 +6,3 @@ class PSdebug():
         cf = currentframe()
         return cf.f_back.f_lineno
 
-
-print(PSdebug.get_linenumber())
-

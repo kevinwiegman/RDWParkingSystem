@@ -8,4 +8,8 @@ db = {
 
 }
 
+API = {
+    'RDW': 'https://overheid.io/api/voertuiggegevens/'
+}
+
 
