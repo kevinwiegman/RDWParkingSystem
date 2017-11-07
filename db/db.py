@@ -40,9 +40,8 @@ class Database(object):
             with self.connection.cursor() as cursor:
                 # Create a new record
                 sql = "INSERT INTO `ParkingSystem`.`Log` (`Kenteken`, `endTime`, `filename`) VALUES (%s, '1111-11-11 11:11:11', %s);"
-                cursor.execute(
-                    sql, (car.get_number_plate(), car.get_file_location()))
-
+                query_var = (car.get_number_plate(), car.get_file_location())
+                cursor.execute(sql, query_var)
             # connection is not autocommit by default. So you must commit to save
             # your changes.
             self.connection.commit()
