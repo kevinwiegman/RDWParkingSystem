@@ -2,11 +2,10 @@ from tkinter import *
 
 
 buttons = [
-    '~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', 'TAB',
-    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '\\', '7', '8', '9', 'BACK',
-    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '[', ']', '4', '5', '6'
-    , 'SHIFT',
-    'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '?', '/', '1', '2', '3', 'SPACE',
+    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', ' ', '7', '8', '9', 'BACK',
+    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ' ', ' ', '4', '5', '6', '  ',
+    'z', 'x', 'c', 'v', 'b', 'n', 'm', ' ', ' ', ' ', ' ', '1', '2', '3', '  ',
+    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '0', ' ', '  ',
 ]
 
 invoer = []
@@ -21,10 +20,9 @@ def select(value):
         invoer.pop()
         print(invoer)
 
-    elif value == "SPACE":
-        entry.insert(END, ' ')
-    elif value == " Tab ":
-        entry.insert(END, '    ')
+    elif value == " " or value == "  ":
+        None
+
     else:
         entry.insert(END, value)
         invoer.append(value)
@@ -187,6 +185,8 @@ def handmatig_screen():
             Annuleren
             Bevestigen
     """
+    global invoer
+    invoer = []
     kb = Tk()
     kb.title("HosoKeys")
     kb.geometry('550x300')
@@ -197,36 +197,37 @@ def handmatig_screen():
     global entry
     entry = Entry(kb, width=50)
     entry.grid(row=1, columnspan=15)
-    varRow = 3
-    varColumn = 0
+    varrow = 3
+    varcolumn = 0
 
     for button in buttons:
 
         command = lambda x=button: select(x)
 
-        if button == "SPACE" or button == "SHIFT" or button == "BACK":
+        if button == "SPACE" or button == "SHIFT" or button == "BACK" or button == "  ":
             Button(kb, text=button, width=6, bg="#3c4987", fg="#ffffff",
                            activebackground="#ffffff", activeforeground="#3c4987", relief='raised', padx=1,
-                           pady=1, bd=1, command=command).grid(row=varRow, column=varColumn)
+                           pady=1, bd=1, command=command).grid(row=varrow, column=varcolumn)
 
         else:
             Button(kb, text=button, width=4, bg="#3c4987", fg="#ffffff",
                            activebackground="#ffffff", activeforeground="#3c4987", relief='raised', padx=1,
-                           pady=1, bd=1, command=command).grid(row=varRow, column=varColumn)
+                           pady=1, bd=1, command=command).grid(row=varrow, column=varcolumn)
 
-        varColumn += 1
+        varcolumn += 1
 
-        if varColumn > 14 and varRow == 3:
-            varColumn = 0
-            varRow += 1
-        if varColumn > 14 and varRow == 4:
-            varColumn = 0
-            varRow += 1
-        if varColumn > 14 and varRow == 5:
-            varColumn = 0
-            varRow += 1
+        if varcolumn > 14 and varrow == 3:
+            varcolumn = 0
+            varrow += 1
+        if varcolumn > 14 and varrow == 4:
+            varcolumn = 0
+            varrow += 1
+        if varcolumn > 14 and varrow == 5:
+            varcolumn = 0
+            varrow += 1
 
-    def next():
+    def nextscreen():
+        global kenteken
         kenteken = ''.join(invoer)
         print(kenteken)
         kb.destroy()
@@ -235,7 +236,7 @@ def handmatig_screen():
     w = Label(kb, text="Kenteken:", font=("Arial", 20), background="white")
     w.place(x=270, y=50, anchor="c")
     test2 = Button(kb, text='Annuleren', height=1, width=15, font=("Arial", 20), command=kb.destroy)
-    test3 = Button(kb, text='Bevestigen', height=1, width=15, font=("Arial", 20), command=next)
+    test3 = Button(kb, text='Bevestigen', height=1, width=15, font=("Arial", 20), command=nextscreen)
     test2.place(x=140, y=250, anchor="c")
     test3.place(x=410, y=250, anchor="c")
     kb.mainloop()
