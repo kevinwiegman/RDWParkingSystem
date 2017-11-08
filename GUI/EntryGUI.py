@@ -248,14 +248,15 @@ def handmatig_screen():
 def entry_screen():
     """"
     Scherm: Entry scherm
-    String: Kom binnen
+    String: U kunt inrijden
     Sleep: 8 seconden
     """
+    print(kenteken)
     entryscreen = Tk()
     entryscreen.title('EntryGUI')
     entryscreen.geometry('550x300+100+100')
     entryscreen.configure(background='white')
-    w = Label(entryscreen, text="Kom binnen", font=("Arial", 20), background="white")
+    w = Label(entryscreen, text="U kunt inrijden", font=("Arial", 20), background="white")
     w.pack(side='top')
     w.after(8000, lambda: entryscreen.destroy())
     mainloop()
