@@ -3,6 +3,7 @@ import recognize
 import config
 from car import Car
 from API import RDWAPI
+from db import Database
 buttons = [
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', ' ', '7', '8', '9', 'BACK',
     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ' ', ' ', '4', '5', '6', '  ',
@@ -11,7 +12,7 @@ buttons = [
 ]
 
 invoer = []
-
+car = None
 
 def select(value):
     """"
@@ -52,7 +53,9 @@ def check_rdw():
     global kenteken
     print(kenteken)
     rdw = RDWAPI(kenteken)
+    global car
     car = rdw.get_car()
+    car.set_file_location(config.imagePointer)
 
     if car.parking_allowed():  # Check if the car release is after 2001 AND uses a Diesel engine
         return entry_screen()
@@ -259,6 +262,10 @@ def entry_screen():
     Sleep: 8 seconden
     """
     print(kenteken)
+    global car
+    store = Database()
+    store.insert_car(car)
+
     entryscreen = Tk()
     entryscreen.title('EntryGUI')
     entryscreen.geometry('550x300+100+100')

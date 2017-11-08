@@ -21,10 +21,13 @@ class Car:
     # dedicated API response field for this
 
     def get_number_plate(self):
-        return self.number_plate
+        return self.kenteken
 
     def get_file_location(self):
         return self.file_location
+
+    def set_file_location(self, file_location):
+        self.file_location = file_location
 
     # Should be unavoided, but unavoidable
     def get_undefined_value(self, key):

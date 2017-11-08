@@ -49,7 +49,7 @@ class Database:
             # your changes.
             self.connection.commit()
         except:
-            print(PSdebug.get_linenumber())
+            print(PSdebug.get_linenumber() + " CAR IMPORT ERROR Values: " + query_var)
 
     def get_unreleased_car_record_by_car(self, car):
         try:
@@ -62,8 +62,21 @@ class Database:
                 # {'id': 3, 'Kenteken': '31-HP-HZ', 'startTime': datetime.datetime(2017, 6, 12, 10, 0), 'endTime': datetime.datetime(1111, 11, 11, 11, 11, 11), 'filename': 'c:/py/img/4'}
                 return cursor.fetchone()
         except:
+            # TODO: Nice Error dump
             print(PSdebug.get_linenumber())
-
+    def set_car_paid_by_number_plate(self, number_plate):
+        try:
+            with self.connection.cursor() as cursor:
+                sql = "select paid from Log where id = (select max(id) from Log where `Kenteken` = %s)"
+                cursor.execute(sql, (number_plate))
+                state = cursor.fetchone()['paid']
+                if state == 0:
+                    paid = False
+                else:
+                    paid = True
+                return paid
+        except:
+            raise Exception('Error during trying to find carr')
     def get_unreleased_car_record_by_number_plate(self, number_plate):
         try:
             with self.connection.cursor() as cursor:
