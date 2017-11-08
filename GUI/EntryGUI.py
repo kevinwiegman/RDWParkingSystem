@@ -60,7 +60,7 @@ def start_screen():
     Button: Start
     """""
     start = Tk()
-    start.title('')
+    start.title('EntryGUI')
     start.geometry('550x300+100+100')
     start.configure(background='white')
     start.columnconfigure(1, minsize=150)
@@ -80,7 +80,7 @@ def check_screen():
     Sleep: 8 seconden
     """""
     checkscreen = Tk()
-    checkscreen.title('')
+    checkscreen.title('EntryGUI')
     checkscreen.geometry('550x300+100+100')
     checkscreen.configure(background='white')
 
@@ -101,7 +101,7 @@ def not_allowed_screen():
     Sleep: 8 seconden
     """
     notallowed = Tk()
-    notallowed.title('')
+    notallowed.title('EntryGUI')
     notallowed.geometry('550x300+100+100')
     notallowed.configure(background='white')
     w = Label(notallowed, text="Helaas, uw voertuig voldoet niet aan de", font=("Arial", 20), background="white")
@@ -125,7 +125,7 @@ def found_screen(kenteken):
             Handmatig
     """
     found = Tk()
-    found.title('')
+    found.title('EntryGUI')
     found.geometry('550x300+100+100')
     found.configure(background='white')
     w = Label(found, text="Kenteken: "+ kenteken, font=("Arial", 20), background="white")
@@ -156,7 +156,7 @@ def not_found_screen():
             Handmatig
     """
     denied = Tk()
-    denied.title('')
+    denied.title('EntryGUI')
     denied.geometry('550x300+100+100')
     denied.configure(background='white')
     w = Label(denied, text="Kenteken niet gevonden", font=("Arial", 20), background="white")
@@ -188,7 +188,7 @@ def handmatig_screen():
     global invoer
     invoer = []
     kb = Tk()
-    kb.title("HosoKeys")
+    kb.title('EntryGUI')
     kb.geometry('550x300+100+100')
     kb.resizable(0, 0)
     kb.configure(background='white')
@@ -252,7 +252,7 @@ def entry_screen():
     Sleep: 8 seconden
     """
     entryscreen = Tk()
-    entryscreen.title('')
+    entryscreen.title('EntryGUI')
     entryscreen.geometry('550x300+100+100')
     entryscreen.configure(background='white')
     w = Label(entryscreen, text="Kom binnen", font=("Arial", 20), background="white")
