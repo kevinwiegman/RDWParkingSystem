@@ -41,6 +41,7 @@ def select(value):
         invoer.append(value)
         print(invoer)
 
+
 def check_kenteken_database():
     """"
     Check of het kenteken in de huidige kenteken database aanwezig is
@@ -53,12 +54,13 @@ def check_kenteken_database():
     else:
         kenteken_not_known_screen()
 
+
 def check_factuur_database():
     """"
     Check of het kenteken al bekend is in de database en gekoppeld is aan een account
     """
     # TODO: Kenteken in factuur database zoeken
-    database = ['abc']  # Test
+    database = ['']  # Test
 
     if kenteken in database:
         return True
@@ -259,6 +261,7 @@ def kenteken_not_known_screen():
     btn.place(x=270, y=200, anchor="c")
     mainloop()
 
+
 def kenteken_not_in_factuur_database_screen():
     """"
     Scherm: Kenteken is niet gekoppeld aan account
@@ -266,7 +269,14 @@ def kenteken_not_in_factuur_database_screen():
     Button: Account maken
             Annuleren
     """
-    def company():
+    choose = Tk()
+    choose.title('PayGUI')
+    choose.geometry('550x300+100+100')
+    choose.configure(background='white')
+    w = Label(choose, text="Factuurgegevens niet bekend", font=("Arial", 20), background="white")
+    w.pack(side='top')
+
+    def company_fun():
         global invoer
         invoer = []
         kb = Tk()
@@ -314,7 +324,6 @@ def kenteken_not_in_factuur_database_screen():
             print(company)
             kb.destroy()
 
-
         w = Label(kb, text="Bedrijfsnaam: ", font=("Arial", 20), background="white")
         w.place(x=275, y=25, anchor="c")
         w2 = Label(kb, text="(niet verplicht)", font=("Arial", 10), background="white")
@@ -323,7 +332,7 @@ def kenteken_not_in_factuur_database_screen():
         test3.place(x=270, y=250, anchor="c")
         kb.mainloop()
 
-    def name():
+    def name_fun():
         global invoer
         invoer = []
         kb = Tk()
@@ -379,7 +388,8 @@ def kenteken_not_in_factuur_database_screen():
         test3 = Button(kb, text='Volgende', height=1, width=15, font=("Arial", 20), command=nextscreen)
         test3.place(x=270, y=250, anchor="c")
         kb.mainloop()
-    def email():
+
+    def email_fun():
         global invoer
         invoer = []
         kb = Tk()
@@ -439,7 +449,8 @@ def kenteken_not_in_factuur_database_screen():
         test3 = Button(kb, text='Volgende', height=1, width=15, font=("Arial", 20), command=nextscreen)
         test3.place(x=270, y=250, anchor="c")
         kb.mainloop()
-    def phonenumber():
+
+    def phonenumber_fun():
         global invoer
         invoer = []
         kb = Tk()
@@ -495,7 +506,8 @@ def kenteken_not_in_factuur_database_screen():
         test3 = Button(kb, text='Volgende', height=1, width=15, font=("Arial", 20), command=nextscreen)
         test3.place(x=270, y=250, anchor="c")
         kb.mainloop()
-    def streetname():
+
+    def streetname_fun():
         global invoer
         invoer = []
         kb = Tk()
@@ -551,7 +563,8 @@ def kenteken_not_in_factuur_database_screen():
         test3 = Button(kb, text='Volgende', height=1, width=15, font=("Arial", 20), command=nextscreen)
         test3.place(x=270, y=250, anchor="c")
         kb.mainloop()
-    def number():
+
+    def number_fun():
         global invoer
         invoer = []
         kb = Tk()
@@ -607,7 +620,8 @@ def kenteken_not_in_factuur_database_screen():
         test3 = Button(kb, text='Volgende', height=1, width=15, font=("Arial", 20), command=nextscreen)
         test3.place(x=270, y=250, anchor="c")
         kb.mainloop()
-    def postalcode():
+
+    def postalcode_fun():
         global invoer
         invoer = []
         kb = Tk()
@@ -663,7 +677,8 @@ def kenteken_not_in_factuur_database_screen():
         test3 = Button(kb, text='Volgende', height=1, width=15, font=("Arial", 20), command=nextscreen)
         test3.place(x=270, y=250, anchor="c")
         kb.mainloop()
-    def city():
+
+    def city_fun():
         global invoer
         invoer = []
         kb = Tk()
@@ -719,7 +734,8 @@ def kenteken_not_in_factuur_database_screen():
         test3 = Button(kb, text='Volgende', height=1, width=15, font=("Arial", 20), command=nextscreen)
         test3.place(x=270, y=250, anchor="c")
         kb.mainloop()
-    def country():
+
+    def country_fun():
         global invoer
         invoer = []
         kb = Tk()
@@ -776,26 +792,45 @@ def kenteken_not_in_factuur_database_screen():
         test3.place(x=270, y=250, anchor="c")
         kb.mainloop()
 
-    company()
-    # name()
-    # email()
-    # phonenumber()
-    # streetname()
-    # number()
-    # postalcode()
-    # city()
-    # country()
+    def create_invoice():
+        company_fun()
+        name_fun()
+        email_fun()
+        phonenumber_fun()
+        streetname_fun()
+        number_fun()
+        postalcode_fun()
+        city_fun()
+        country_fun()
 
-    #global company
+    def create():
+        choose.destroy()
+        create_invoice()
+
+    def annuleren():
+        choose.destroy()
+
+    btn = Button(choose, text='Invoeren', height=3, width=15, font=("Arial", 20), command=create)
+    btn2 = Button(choose, text='Annuleren', height=3, width=15, font=("Arial", 20), command=annuleren)
+    btn.place(x=140, y=200, anchor="c")
+    btn2.place(x=410, y=200, anchor="c")
+    mainloop()
+
+
+
     print("Company = " + str(company))
-    # print("Name = " + str(name))
-    # print("Email = " + str(email))
-    # print("Telefoonnummer = " + str(phonenumber))
-    # print("Straat = " + str(streetname))
-    # print("Huisnummer = " + str(number))
-    # print("Postcode = " + str(postalcode))
-    # print("Woonplaats = " + str(city))
-    # print("Land = " + str(country))
+    print("Name = " + str(name))
+    print("Email = " + str(email))
+    print("Telefoonnummer = " + str(phonenumber))
+    print("Straat = " + str(streetname))
+    print("Huisnummer = " + str(number))
+    print("Postcode = " + str(postalcode))
+    print("Woonplaats = " + str(city))
+    print("Land = " + str(country))
+
+    make_invoice_screen()
+
+    # TODO: Put all this info in the database
 
 
 def make_invoice_screen():
@@ -851,8 +886,5 @@ def invoice_send_screen():
 
 
 while True:
-    # pay_screen()
-    kenteken_not_in_factuur_database_screen()
-
-    # start_screen()
-    #invoer_kenteken_screen()
+    start_screen()
+    invoer_kenteken_screen()
