@@ -230,8 +230,11 @@ def handmatig_screen():
         global kenteken
         kenteken = ''.join(invoer)
         print(kenteken)
-        kb.destroy()
-        check_rdw()
+        if len(kenteken) < 1:
+            None
+        else:
+            kb.destroy()
+            check_rdw()
 
     w = Label(kb, text="Kenteken:", font=("Arial", 20), background="white")
     w.place(x=270, y=50, anchor="c")
