@@ -9,8 +9,8 @@ db = {
 
 }
 
-API = {
-    'RDW': 'https://overheid.io/api/voertuiggegevens/'
-}
+# Example.png is still within acceptable date and time where is example2.png isn't allowed in the city centre of Utrecht
+# imagePointer = 'example2.png'
+imagePointer = 'example.png'
 
-
+API = {'RDW': 'https://overheid.io/api/voertuiggegevens/'}

@@ -1,6 +1,8 @@
 from tkinter import *
-
-
+import recognize
+import config
+from car import Car
+from API import RDWAPI
 buttons = [
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', ' ', '7', '8', '9', 'BACK',
     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ' ', ' ', '4', '5', '6', '  ',
@@ -35,7 +37,7 @@ def check_kenteken():
     Check of de Image Text Recognition een kenteken heeft gevonden
     """
     global kenteken
-    kenteken = "NOTALLOWED"
+    kenteken = recognize.extract(config.imagePointer)
     if len(kenteken) == 0:  # Geen kenteken gevonden
         return not_found_screen()
     else:
@@ -47,7 +49,11 @@ def check_rdw():
     """"
     Check of de kenteken toegestaan is
     """
-    if kenteken == "NOTALLOWED":  # Check if the car release is after 2001 AND uses a Diesel engine
+    global kenteken
+    rdw = RDWAPI
+    car = rdw.get_car(kenteken)
+
+    if car.parking_allowed():  # Check if the car release is after 2001 AND uses a Diesel engine
         return not_allowed_screen()
     else:
         return entry_screen()
