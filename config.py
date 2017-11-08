@@ -1,3 +1,4 @@
+# TODO: Globally configure
 db = {
 
     'host': 'localhost',

@@ -113,6 +113,8 @@ class Database:
                 # insert query
                 sql = "INSERT INTO `ParkingLogin`(`idParking`, `idLogin`) VALUES(%s, %s);"
                 cursor.execute(sql, query_var)
+                # Commit's aren't handled automatic
+                self.connection.commit()
         except:
             print(PSdebug.get_linenumber())
 
@@ -127,5 +129,6 @@ class Database:
                 query_var = (user.get_invoice_data())
                 cursor.execute(sql, query_var)
                 self.insert_new_user_car_connection(user.get_number_plate(), cursor.lastrowid)
+                # Commit's is done elsewhere hence absence
         except:
             print(PSdebug.get_linenumber())
