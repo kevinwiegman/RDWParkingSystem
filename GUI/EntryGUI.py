@@ -61,7 +61,7 @@ def start_screen():
     """""
     start = Tk()
     start.title('')
-    start.geometry('550x300')
+    start.geometry('550x300+100+100')
     start.configure(background='white')
     start.columnconfigure(1, minsize=150)
     start.rowconfigure(1, minsize=50)
@@ -81,7 +81,7 @@ def check_screen():
     """""
     checkscreen = Tk()
     checkscreen.title('')
-    checkscreen.geometry('550x300')
+    checkscreen.geometry('550x300+100+100')
     checkscreen.configure(background='white')
 
     def next():
@@ -102,7 +102,7 @@ def not_allowed_screen():
     """
     notallowed = Tk()
     notallowed.title('')
-    notallowed.geometry('550x300')
+    notallowed.geometry('550x300+100+100')
     notallowed.configure(background='white')
     w = Label(notallowed, text="Helaas, uw voertuig voldoet niet aan de", font=("Arial", 20), background="white")
     w2 = Label(notallowed, text="eisen om in het centrum van Utrecht te", font=("Arial", 20), background="white")
@@ -126,7 +126,7 @@ def found_screen(kenteken):
     """
     found = Tk()
     found.title('')
-    found.geometry('550x300')
+    found.geometry('550x300+100+100')
     found.configure(background='white')
     w = Label(found, text="Kenteken: "+ kenteken, font=("Arial", 20), background="white")
     w.pack(side='top')
@@ -157,7 +157,7 @@ def not_found_screen():
     """
     denied = Tk()
     denied.title('')
-    denied.geometry('550x300')
+    denied.geometry('550x300+100+100')
     denied.configure(background='white')
     w = Label(denied, text="Kenteken niet gevonden", font=("Arial", 20), background="white")
     w.pack(side='top')
@@ -189,7 +189,7 @@ def handmatig_screen():
     invoer = []
     kb = Tk()
     kb.title("HosoKeys")
-    kb.geometry('550x300')
+    kb.geometry('550x300+100+100')
     kb.resizable(0, 0)
     kb.configure(background='white')
     kb.rowconfigure(0, minsize=80)
@@ -250,7 +250,7 @@ def entry_screen():
     """
     entryscreen = Tk()
     entryscreen.title('')
-    entryscreen.geometry('550x300')
+    entryscreen.geometry('550x300+100+100')
     entryscreen.configure(background='white')
     w = Label(entryscreen, text="Kom binnen", font=("Arial", 20), background="white")
     w.pack(side='top')
