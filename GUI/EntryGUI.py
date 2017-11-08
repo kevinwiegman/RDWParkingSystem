@@ -50,13 +50,14 @@ def check_rdw():
     Check of de kenteken toegestaan is
     """
     global kenteken
-    rdw = RDWAPI
-    car = rdw.get_car(kenteken)
+    print(kenteken)
+    rdw = RDWAPI(kenteken)
+    car = rdw.get_car()
 
     if car.parking_allowed():  # Check if the car release is after 2001 AND uses a Diesel engine
-        return not_allowed_screen()
-    else:
         return entry_screen()
+    else:
+        return not_allowed_screen()
 
 
 def start_screen():

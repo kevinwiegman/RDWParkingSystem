@@ -2,6 +2,7 @@
 import requests
 import json
 import os
+from validation import NumberPlate
 
 # custom library imports
 from car import Car
@@ -31,8 +32,10 @@ class RDWAPI:
         self.urlTypeSeperator = '&'
         self.number_plate_query_var = 'kenteken='
 
+
         if number_plate is not None:
-            self.number_plate = number_plate
+            val = NumberPlate(number_plate)
+            self.number_plate = val.stripped()
 
     """
     Currently there isn't one dataset with all the information we want which is 
@@ -41,12 +44,12 @@ class RDWAPI:
     """
 
     # TODO: Function that gets data based on the inserted data type and protocol set i.e number plate
-    def get_car(self, number_plate):
-        if number_plate is None:
-            raise ValueError('Number plate is unknown /= None')
-        query = number_plate
+    def get_car(self,):
 
-        APIquery = self.separator + self.number_plate_query_var + query
+        # TODO: Remove
+        query = self.number_plate
+
+        APIquery = self.number_plate_query_var + query
 
         # finally sending out to the overheid.io API access point
         #response = requests.get(self.url + APIquery)
@@ -54,30 +57,30 @@ class RDWAPI:
 
         print(self.url + self.AppPretense + self.AppToken + self.urlTypeSeperator + APIquery)
         response = requests.get(self.url + self.AppPretense + self.AppToken + self.urlTypeSeperator + APIquery)
+        print(self.url + self.AppPretense + self.AppToken + self.urlTypeSeperator + APIquery)
 
+        # There needs to be a check to see if the car is actually known at the RWD
         # If status code is 200, the appropriate range has been selected so no issues SHOULD emerge
         if response.status_code == 200:
             # Because the DICT is inside a LIST an extract is placed
             # TODO: TRY-CATCH
+            # TODO: Check if empty list is returned
             car_data = json.loads(response.text)[0]
 
             # second api call to get the fuel type
-            response = requests.get(car_data['api_gekentekende_voertuigen_brandstof'] + APIquery)
+            response = requests.get(car_data['api_gekentekende_voertuigen_brandstof'] + self.separator+ APIquery)
             if response.status_code == 200:
                 # TODO: Try-CATCH
                 fuel = json.loads(response.text)[0]
 
                 car_data.update(fuel)
+                print(car_data)
                 # TODO: WAAY more fail safes and exceptions placed
                 return Car(**car_data)
 
             else:
                 raise Exception(
-                    'Invalid status code, response is not as expected, response code: ' + str(response.status_code))
+                    'Invalid status code, response is not as expected, during second run response code: ' + str(response.status_code))
 
         else:
             raise Exception('Invalid status code, response is not as expected, response code: ' + str(response.status_code))
-
-
-cr = RDWAPI()
-print(cr.get_car('24PGRL'))

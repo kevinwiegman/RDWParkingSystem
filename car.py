@@ -1,5 +1,6 @@
 # Initialize car based on RDW data
 
+from datetime import datetime
 
 class Car:
     def __init__(self, **kwargs):
@@ -9,7 +10,12 @@ class Car:
                 setattr(self, key, value)
 
     def parking_allowed(self):
-        pass
+        in_service = datetime.strptime(self.datum_eerste_afgifte_nederland, '%d/%m/%Y')
+        allowed = datetime.strptime('2001', '%Y')
+        if self.brandstof_omschrijving == 'Diesel' and in_service < allowed:
+            return False
+        else:
+            return True
 
     # TODO: Check if the car release is after 2001 AND uses a Diesel engine
     # dedicated API response field for this
