@@ -12,6 +12,7 @@ from car import Car
 
 
 # TODO: User addition fields
+# TODO: Optimization: variables for query's formatting in the object itself like the user example
 # TODO: Check if number plate already in system to avoid fraud
 
 class Database:
@@ -63,6 +64,19 @@ class Database:
         except:
             print(PSdebug.get_linenumber())
 
+    def get_unreleased_car_record_by_number_plate(self, number_plate):
+        try:
+            with self.connection.cursor() as cursor:
+                sql = "select * from `Log` where `Kenteken` = %s and endTime = '1111-11-11 11:11:11'"
+                # We only need to end time to calculate the duration of time
+                cursor.execute(sql, (number_plate))
+
+                # Expected return dict looks like:
+                # {'id': 3, 'Kenteken': '31-HP-HZ', 'startTime': datetime.datetime(2017, 6, 12, 10, 0), 'endTime': datetime.datetime(1111, 11, 11, 11, 11, 11), 'filename': 'c:/py/img/4'}
+                return cursor.fetchone()
+        except:
+            print(PSdebug.get_linenumber())
+
     def set_unrealeased_car_to_released_by_car(self, car):
         try:
             with self.connection.cursor() as cursor:
@@ -104,10 +118,10 @@ class Database:
 
     def insert_new_user_car_connection(self, number_plate, user_id):
         """Inserting a new record in the connecting table between cars and users"""
-
         # Acquiring the ID to connect both records
-        record_id_car = self.get_unreleased_car_record_by_number_plate()
+        record_id_car = self.get_unreleased_car_record_by_number_plate(number_plate)['id']
         query_var = (record_id_car, user_id)
+        print(query_var)
         try:
             with self.connection.cursor() as cursor:
                 # insert query
@@ -116,19 +130,19 @@ class Database:
                 # Commit's aren't handled automatic
                 self.connection.commit()
         except:
-            print(PSdebug.get_linenumber())
+            print(PSdebug.get_linenumber() + 'INSERT CONNECTION ERROR')
 
     def insert_new_user(self, user):
         """
         Two Query's -> Adding a new record to the user table and a new connection to a number plate
         Will be done using a transaction to be error correcting
         """
-        try:
-            with self.connection.cursor() as cursor:
-                sql = "INSERT INTO `ParkingSystem`.`Login` (`name`, `email`, `streetname`, `postalcode`, `number`, `city`, `country`) VALUES(%s, %s, %s, %s, %s, %s, %s)"
+
+        with self.connection.cursor() as cursor:
+                sql = "INSERT INTO `ParkingSystem`.`Login` (`name`, `email`, `phonenumber`, `streetname`, `postalcode`, `number`, `city`, `country`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
                 query_var = (user.get_invoice_data())
                 cursor.execute(sql, query_var)
-                self.insert_new_user_car_connection(user.get_number_plate(), cursor.lastrowid)
+                self.insert_id = self.connection.insert_id()
+                self.connection.commit()
+                self.insert_new_user_car_connection(user.get_number_plate(), self.insert_id)
                 # Commit's is done elsewhere hence absence
-        except:
-            print(PSdebug.get_linenumber())
