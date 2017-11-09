@@ -32,3 +32,10 @@ class Car:
     # Should be unavoided, but unavoidable
     def get_undefined_value(self, key):
         return getattr(self, key)
+
+    def is_paid(self):
+        print(self)
+        if getattr(self, 'paid') == 0:
+            return False
+        else:
+            return True

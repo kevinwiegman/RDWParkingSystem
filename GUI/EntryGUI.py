@@ -39,11 +39,11 @@ def check_kenteken():
     """
     global kenteken
     kenteken = recognize.extract(config.imagePointer)
-    if len(kenteken) == 0:  # Geen kenteken gevonden
-        return not_found_screen()
-    else:
+    #TODO: RegEX check
+    if len(kenteken) >= 7:  # Geen kenteken gevonden
         return found_screen(kenteken)  # Kenteken gevonden
-
+    else:
+        return not_found_screen()
 
 def check_rdw():
     # TODO: check of kenteken toegestaan is mbv RDW API

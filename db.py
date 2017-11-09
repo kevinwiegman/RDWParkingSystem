@@ -9,6 +9,7 @@ import config
 import PSdebug
 
 from car import Car
+from validation import NumberPlate
 
 
 # TODO: User addition fields
@@ -64,6 +65,7 @@ class Database:
         except:
             # TODO: Nice Error dump
             print(PSdebug.get_linenumber())
+
     def set_car_paid_by_number_plate(self, number_plate):
         try:
             with self.connection.cursor() as cursor:
@@ -77,17 +79,19 @@ class Database:
                 return paid
         except:
             raise Exception('Error during trying to find carr')
-    def get_unreleased_car_record_by_number_plate(self, number_plate):
-        try:
-            with self.connection.cursor() as cursor:
-                sql = "select * from `Log` where `Kenteken` = %s and endTime = '1111-11-11 11:11:11'"
-                # We only need to end time to calculate the duration of time
-                cursor.execute(sql, (number_plate))
 
-                # Expected return dict looks like:
-                # {'id': 3, 'Kenteken': '31-HP-HZ', 'startTime': datetime.datetime(2017, 6, 12, 10, 0), 'endTime': datetime.datetime(1111, 11, 11, 11, 11, 11), 'filename': 'c:/py/img/4'}
-                return cursor.fetchone()
-        except:
+    def get_unreleased_car_record_by_number_plate(self, number_plate):
+
+        if '-' in number_plate:
+            number_plate = NumberPlate(number_plate).stripped()
+        with self.connection.cursor() as cursor:
+            sql = "select * from `Log` where `Kenteken` = %s and endTime = '1111-11-11 11:11:11'"
+            # We only need to end time to calculate the duration of time
+            print(cursor.execute(sql, (number_plate)))
+
+            # Expected return dict looks like:
+            # {'id': 3, 'Kenteken': '31-HP-HZ', 'startTime': datetime.datetime(2017, 6, 12, 10, 0), 'endTime': datetime.datetime(1111, 11, 11, 11, 11, 11), 'filename': 'c:/py/img/4'}
+            return cursor.fetchone()
             print(PSdebug.get_linenumber())
 
     def set_unrealeased_car_to_released_by_car(self, car):
@@ -106,26 +110,26 @@ class Database:
 
     # TODO: Create dynamic variables
     def get_released_car_duration_by_car(self, car):
-        try:
-            with self.connection.cursor() as cursor:
-                # Only want the amount of MINUTES, business rules need not be applied in query's
-                sql = "SELECT timestampdiff(MINUTE, startTime, endTime) AS MINUTE FROM `Log`PSdebug where id = (SELECT MAX(ID) FROM `Log` WHERE `Kenteken` = %s)"
-                cursor.execute(sql, (car.get_number_plate()))
-                timeDifference = cursor.fetchone()
+        with self.connection.cursor() as cursor:
+            # Only want the amount of MINUTES, business rules need not be applied in query's
+            sql = "SELECT timestampdiff(MINUTE, startTime, endTime) AS MINUTE FROM `Log`PSdebug where id = (SELECT MAX(ID) FROM `Log` WHERE `Kenteken` = %s)"
+            print(dir(car))
+            print(cursor.execute(sql, (car.get_number_plate())))
+            timeDifference = cursor.fetchone()
 
-                # Returns the amount of minutes in a whole number i.e 60
-                return timeDifference['MINUTE']
-        except:
-            print(PSdebug.get_linenumber())
+            # Returns the amount of minutes in a whole number i.e 60
+            return timeDifference['MINUTE']
+
+        print(PSdebug.get_linenumber())
 
     def get_car_by_number_plate(self, number_plate):
+        number_plate = NumberPlate(number_plate)
         try:
             with self.connection.cursor() as cursor:
                 # Acquiring all car data
-                sql = "SELECT * FROM `Log` WHERE `Kenteken` = %s)"
-                cursor.execute(sql, (number_plate))
-
-                return Car(cursor.fetchone())
+                sql = "SELECT * FROM `Log` WHERE `Kenteken` = %s"
+                cursor.execute(sql, (number_plate.stripped()))
+                return Car(**cursor.fetchone())
         except:
             print(PSdebug.get_linenumber())
 
@@ -152,10 +156,10 @@ class Database:
         """
 
         with self.connection.cursor() as cursor:
-                sql = "INSERT INTO `ParkingSystem`.`Login` (`name`, `email`, `phonenumber`, `streetname`, `postalcode`, `number`, `city`, `country`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
-                query_var = (user.get_invoice_data())
-                cursor.execute(sql, query_var)
-                self.insert_id = self.connection.insert_id()
-                self.connection.commit()
-                self.insert_new_user_car_connection(user.get_number_plate(), self.insert_id)
-                # Commit's is done elsewhere hence absence
+            sql = "INSERT INTO `ParkingSystem`.`Login` (`name`, `email`, `phonenumber`, `streetname`, `postalcode`, `number`, `city`, `country`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
+            query_var = (user.get_invoice_data())
+            cursor.execute(sql, query_var)
+            self.insert_id = self.connection.insert_id()
+            self.connection.commit()
+            self.insert_new_user_car_connection(user.get_number_plate(), self.insert_id)
+            # Commit's is done elsewhere hence absence

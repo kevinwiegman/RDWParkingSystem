@@ -1,5 +1,8 @@
 from tkinter import *
-
+from car import Car
+from db import Database
+import recognize
+import config
 kentekenbuttons = [
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', ' ', '7', '8', '9', 'BACK',
     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ' ', ' ', '4', '5', '6', '  ',
@@ -8,7 +11,7 @@ kentekenbuttons = [
 ]
 
 invoer = []
-
+car = ''
 
 def select(value):
     """"
@@ -34,34 +37,37 @@ def check_kenteken():
     Check of de Image Text Recognition een kenteken heeft gevonden
     """
     global kenteken
-    kenteken = "abc"
-    if len(kenteken) == 0:  # Geen kenteken gevonden
-        return not_found_screen()
+    kenteken = recognize.extract(config.imagePointer)
+    #TODO: RegEX check
+    print(len(kenteken))
+    if len(kenteken) >= 7:  # Geen kenteken gevonden
+        return found_screen(kenteken) # Kenteken gevonden
     else:
-        return check_kenteken_database()  # Kenteken gevonden
+        return not_found_screen()
 
-
-def check_kenteken_database():
+def check_kenteken_database(kenteken):
     """"
     Check of het kenteken in de huidige kenteken database aanwezig is
     """
     # TODO: Kenteken in huidige database zoeken
-    database = ['abc']  # test
-
-    if kenteken in database:
-        check_payed()
+    db = Database()
+    print(kenteken)
+    if db.get_unreleased_car_record_by_number_plate(kenteken) is not None:
+        check_payed(kenteken)
     else:
         kenteken_not_known_screen()
 
 
-def check_payed():
+def check_payed(kenteken):
     """"
     Functie die checkt of er betaald is
     """
     # TODO: Check of er betaald is
     betaald = False  # test
 
-    if betaald:
+    db = Database()
+    car = db.get_car_by_number_plate(kenteken)
+    if car.is_paid():
         exit_screen()
     else:
         not_payed_screen()
@@ -194,7 +200,7 @@ def invoer_kenteken_screen():
             None
         else:
             kb.destroy()
-            check_kenteken_database()
+            check_kenteken_database(kenteken.upper())
 
     w = Label(kb, text="Kenteken:", font=("Arial", 20), background="white")
     w.place(x=270, y=50, anchor="c")
@@ -203,6 +209,38 @@ def invoer_kenteken_screen():
     test2.place(x=140, y=250, anchor="c")
     test3.place(x=410, y=250, anchor="c")
     kb.mainloop()
+
+
+def found_screen(kenteken):
+    """"
+    Scherm: Kenteken gevonden
+    String: Kenteken: XX-XX-XX
+            is dit juist?
+    Button: Ja
+            Handmatig
+    """
+    found = Tk()
+    found.title('EntryGUI')
+    found.geometry('550x300+100+100')
+    found.configure(background='white')
+    w = Label(found, text="Kenteken: "+ kenteken, font=("Arial", 20), background="white")
+    w.pack(side='top')
+    k = Label(found, text='Is dit juist?', font=("Arial", 20), background="white")
+    k.pack(side='top')
+
+    def handmatig():
+        found.destroy()
+        invoer_kenteken_screen()
+
+    def entry():
+        found.destroy()
+        return check_kenteken_database(kenteken)
+
+    btn = Button(found, text='Ja', height=3, width=15, font=("Arial", 20), command=entry)
+    btn2 = Button(found, text='Handmatig', height=3, width=15, font=("Arial", 20), command=handmatig)
+    btn.place(x=140, y=200, anchor="c")
+    btn2.place(x=410, y=200, anchor="c")
+    mainloop()
 
 
 def kenteken_not_known_screen():
