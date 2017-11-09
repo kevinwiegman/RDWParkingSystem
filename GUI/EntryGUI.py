@@ -40,7 +40,7 @@ def check_kenteken():
     global kenteken
     kenteken = recognize.extract(config.imagePointer)
     #TODO: RegEX check
-    if len(kenteken) >= 7:  # Geen kenteken gevonden
+    if len(kenteken) > 7:  # Geen kenteken gevonden
         return found_screen(kenteken)  # Kenteken gevonden
     else:
         return not_found_screen()

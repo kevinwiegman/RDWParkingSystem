@@ -1,4 +1,5 @@
-from db import Database
+import db
+
 
 class User:
     """Class used for routing user data, stores users in database and can return the data required for an invoice"""
@@ -13,14 +14,13 @@ class User:
         return ['name', 'email', 'phonenumber', 'streetname', 'postalcode', 'number', 'city', 'country']
 
     def store_user(self):
-        db = Database()
-        print(db.insert_new_user(self))
-
+        dataModel = db.Database()
+        print(dataModel.insert_new_user(self))
 
     # Used to return only the relevant data for the invoice placed in the database
     def get_invoice_data(self):
         # Invoice data needs to be a tuple for the PyMySQL package
-        invoice_data =()
+        invoice_data = ()
         # TODO: Optimize function
         for x in self.invoice_data():
             invoice_data = invoice_data + (getattr(self, x),)

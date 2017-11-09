@@ -10,6 +10,7 @@ import PSdebug
 
 from car import Car
 from validation import NumberPlate
+from user import User
 
 
 # TODO: User addition fields
@@ -45,12 +46,12 @@ class Database:
                 # Create a new record
                 sql = "INSERT INTO `ParkingSystem`.`Log` (`Kenteken`, `endTime`, `filename`) VALUES (%s, '1111-11-11 11:11:11', %s);"
                 query_var = (car.get_number_plate(), car.get_file_location())
-                cursor.execute(sql, query_var)
+                print(cursor.execute(sql, query_var))
             # connection is not autocommit by default. So you must commit to save
             # your changes.
             self.connection.commit()
         except:
-            print(PSdebug.get_linenumber() + " CAR IMPORT ERROR Values: " + query_var)
+            print(PSdebug.get_linenumber() + " CAR IMPORT ERROR")
 
     def get_unreleased_car_record_by_car(self, car):
         try:
@@ -112,7 +113,7 @@ class Database:
     def get_released_car_duration_by_car(self, car):
         with self.connection.cursor() as cursor:
             # Only want the amount of MINUTES, business rules need not be applied in query's
-            sql = "SELECT timestampdiff(MINUTE, startTime, endTime) AS MINUTE FROM `Log`PSdebug where id = (SELECT MAX(ID) FROM `Log` WHERE `Kenteken` = %s)"
+            sql = "SELECT timestampdiff(MINUTE, startTime, endTime) AS MINUTE FROM `Log`  where id = (SELECT MAX(ID) FROM `Log` WHERE `Kenteken` = %s)"
             print(dir(car))
             print(cursor.execute(sql, (car.get_number_plate())))
             timeDifference = cursor.fetchone()
@@ -129,9 +130,10 @@ class Database:
                 # Acquiring all car data
                 sql = "SELECT * FROM `Log` WHERE `Kenteken` = %s"
                 cursor.execute(sql, (number_plate.stripped()))
-                return Car(**cursor.fetchone())
+                car_data = cursor.fetchone()
+                return Car(**car_data)
         except:
-            print(PSdebug.get_linenumber())
+                print(PSdebug.get_linenumber())
 
     def insert_new_user_car_connection(self, number_plate, user_id):
         """Inserting a new record in the connecting table between cars and users"""
@@ -154,7 +156,6 @@ class Database:
         Two Query's -> Adding a new record to the user table and a new connection to a number plate
         Will be done using a transaction to be error correcting
         """
-
         with self.connection.cursor() as cursor:
             sql = "INSERT INTO `ParkingSystem`.`Login` (`name`, `email`, `phonenumber`, `streetname`, `postalcode`, `number`, `city`, `country`) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
             query_var = (user.get_invoice_data())
@@ -163,3 +164,15 @@ class Database:
             self.connection.commit()
             self.insert_new_user_car_connection(user.get_number_plate(), self.insert_id)
             # Commit's is done elsewhere hence absence
+
+    def check_if_user_details_known_by_number_plate(self, number_plate):
+        try:
+            with self.connection.cursor() as cursor:
+                sql = "SELECT * FROM `Login` where id = (SELECT idParking FROM `ParkingLogin` where idLogin = (SELECT MAX(ID) FROM `Log` WHERE `Kenteken` = %s AND paid = 1))"
+                number_plate = NumberPlate(number_plate)
+                cursor.execute(sql, (number_plate.stripped()))
+                usr = cursor.fetchone()
+                usr['kenteken'] = number_plate
+                return User(**cursor.fetchone())
+        except:
+            print(PSdebug.get_linenumber() + 'USER KNOWN DATA ERROR')

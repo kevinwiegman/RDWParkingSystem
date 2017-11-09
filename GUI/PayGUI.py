@@ -1,4 +1,6 @@
 from tkinter import *
+from db import Database
+import config
 
 kentekenbuttons = [
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', ' ', '7', '8', '9', 'BACK',
@@ -42,30 +44,31 @@ def select(value):
         print(invoer)
 
 
-def check_kenteken_database():
+def check_kenteken_database(kenteken):
     """"
     Check of het kenteken in de huidige kenteken database aanwezig is
     """
     # TODO: Kenteken in huidige database zoeken
-    database = ['abc']  # Test
-
-    if kenteken in database:
-        pay_or_invoice_screen()
+    db = Database()
+    if db.get_unreleased_car_record_by_number_plate(kenteken) is not None:
+        pay_or_invoice_screen(kenteken)
     else:
         kenteken_not_known_screen()
 
 
-def check_factuur_database():
+def check_factuur_database(kenteken):
     """"
     Check of het kenteken al bekend is in de database en gekoppeld is aan een account
     """
     # TODO: Kenteken in factuur database zoeken
-    database = ['']  # Test
+    db = Database()
+    user = db.check_if_user_details_known_by_number_plate(kenteken)
 
-    if kenteken in database:
-        return True
+    # TODO: Prettify
+    if user is not None:
+        return [True, user]
     else:
-        return False
+        return [False]
 
 
 def start_screen():
@@ -145,7 +148,7 @@ def invoer_kenteken_screen():
             None
         else:
             kb.destroy()
-            check_kenteken_database()
+            check_kenteken_database(kenteken)
 
     w = Label(kb, text="Kenteken:", font=("Arial", 20), background="white")
     w.place(x=270, y=50, anchor="c")
@@ -155,14 +158,16 @@ def invoer_kenteken_screen():
     test3.place(x=410, y=250, anchor="c")
     kb.mainloop()
 
-
-def pay_or_invoice_screen():
+# Avoiding name collision
+def pay_or_invoice_screen(number_plate):
     """"
     Scherm: Keuze tussen gelijk betalen of factuur
     String: Betaalwijze
     Button: Cash / Pin
             Factuur
     """
+    global kenteken
+    kenteken = number_plate
     choose = Tk()
     choose.title('PayGUI')
     choose.geometry('550x300+100+100')
@@ -175,12 +180,13 @@ def pay_or_invoice_screen():
         pay_screen()
 
     def factuur():
-        if check_factuur_database():
+        global kenteken
+        if check_factuur_database(kenteken)[0]:
             choose.destroy()
             make_invoice_screen()
         else:
             choose.destroy()
-            kenteken_not_in_factuur_database_screen()
+            kenteken_not_in_factuur_database_screen(kenteken)
 
     btn = Button(choose, text='Cash / Pin', height=3, width=15, font=("Arial", 20), command=cashpin)
     btn2 = Button(choose, text='Factuur', height=3, width=15, font=("Arial", 20), command=factuur)
@@ -197,14 +203,20 @@ def pay_screen():
     Button: Betalen
             Annuleren
     """
-    bedrag = "€10,00"  # TODO: Bedrag berekenen en importeren
-    parkeertijd = "2:00 uur"  # TODO: Parkeertijd berekenen en importeren
+    global kenteken
+    db = Database()
+    car = db.get_car_by_number_plate(kenteken)
+    print(car.get_number_plate())
+    db.set_unrealeased_car_to_released_by_car(car)
+    parking_duration = str(db.get_released_car_duration_by_car(car))
+    price = str(10 * parking_duration) # TODO: Bedrag berekenen en importeren
+
     pay = Tk()
     pay.title('PayGUI')
     pay.geometry('550x300+100+100')
     pay.configure(background='white')
-    w = Label(pay, text="Parkeertijd: " + parkeertijd, font=("Arial", 20), background="white")
-    w2 = Label(pay, text="Bedrag: " + bedrag, font=("Arial", 20), background="white")
+    w = Label(pay, text="Parkeertijd: " + parking_duration, font=("Arial", 20), background="white")
+    w2 = Label(pay, text="Bedrag: €" + price, font=("Arial", 20), background="white")
     w.place(x=10, y=50, anchor="w")
     w2.place(x=10, y=100, anchor="w")
 
@@ -833,7 +845,7 @@ def kenteken_not_in_factuur_database_screen():
     # TODO: Put all this info in the database
 
 
-def make_invoice_screen():
+def make_invoice_screen(User):
     """"
     Scherm: Bedrag en knop om factuur te sturen
     String: Parkeertijd:
@@ -841,20 +853,24 @@ def make_invoice_screen():
     Button: Versturen
             Annuleren
     """
-    bedrag = "€10,00"  # TODO: Bedrag berekenen en importeren
-    parkeertijd = "2:00 uur"  # TODO: Parkeertijd berekenen en importeren
+    db = Database()
+    car = db.get_car_by_number_plate(User.get_number_plate())
+    db.set_unrealeased_car_to_released_by_car(car)
+    parking_duration = db.get_released_car_duration_by_car(car)
+    price = 10 * parking_duration  # TODO: Bedrag berekenen en importeren
+
     pay = Tk()
     pay.title('PayGUI')
     pay.geometry('550x300+100+100')
     pay.configure(background='white')
-    w = Label(pay, text="Parkeertijd: " + parkeertijd, font=("Arial", 20), background="white")
-    w2 = Label(pay, text="Bedrag: " + bedrag, font=("Arial", 20), background="white")
+    w = Label(pay, text="Parkeertijd: " + parking_duration, font=("Arial", 20), background="white")
+    w2 = Label(pay, text="Bedrag: €" + price, font=("Arial", 20), background="white")
     w.place(x=10, y=50, anchor="w")
     w2.place(x=10, y=100, anchor="w")
 
     def versturen():
         pay.destroy()
-        # TODO: factuur sturen m.b.v variabele bedrag + kenteken
+        # TODO: factuur sturen m.b.v variabele price + kenteken
         invoice_send_screen()
 
     def annuleren():

@@ -20,8 +20,12 @@ class Car:
     # TODO: Check if the car release is after 2001 AND uses a Diesel engine
     # dedicated API response field for this
 
+    # TODO: Solve bug in the database that forces returns Kenteken I.O kenteken
     def get_number_plate(self):
-        return self.kenteken
+        if hasattr(self, 'Kenteken'):
+            return self.Kenteken
+        else:
+            return self.kenteken
 
     def get_file_location(self):
         return self.file_location
