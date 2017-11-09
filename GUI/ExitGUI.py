@@ -28,6 +28,19 @@ def select(value):
         print(invoer)
 
 
+def check_kenteken():
+    # TODO: check of kenteken via Image Text Recognition gevonden kan worden
+    """"
+    Check of de Image Text Recognition een kenteken heeft gevonden
+    """
+    global kenteken
+    kenteken = "abc"
+    if len(kenteken) == 0:  # Geen kenteken gevonden
+        return not_found_screen()
+    else:
+        return check_kenteken_database()  # Kenteken gevonden
+
+
 def check_kenteken_database():
     """"
     Check of het kenteken in de huidige kenteken database aanwezig is
@@ -71,6 +84,56 @@ def start_screen():
     w.grid(row=1, column=3)
     btn = Button(start, text='Start', height=3, width=15, font=("Arial", 20), command=start.destroy)
     btn.grid(row=4, column=3, sticky=W)
+    mainloop()
+
+
+def check_screen():
+    """"
+    scherm: Kenteken checken
+    String: Kenteken scannen...
+    Sleep: 8 seconden
+    """""
+    checkscreen = Tk()
+    checkscreen.title('EntryGUI')
+    checkscreen.geometry('550x300+100+100')
+    checkscreen.configure(background='white')
+
+    def next():
+        checkscreen.destroy()
+        check_kenteken()
+
+    w = Label(checkscreen, text="Kenteken scannen...", font=("Arial", 20), background="white")
+    w.pack(side='top')
+    w.after(2000, lambda: next())
+    mainloop()
+
+
+def not_found_screen():
+    """"
+    Scherm: Kenteken NIET gevonden
+    String: Kenteken niet gevonden
+    Button: Opnieuw
+            Handmatig
+    """
+    denied = Tk()
+    denied.title('EntryGUI')
+    denied.geometry('550x300+100+100')
+    denied.configure(background='white')
+    w = Label(denied, text="Kenteken niet gevonden", font=("Arial", 20), background="white")
+    w.pack(side='top')
+
+    def handmatig():
+        denied.destroy()
+        invoer_kenteken_screen()
+
+    def opnieuw():
+        denied.destroy()
+        check_screen()
+
+    btn = Button(denied, text='Opnieuw', height=3, width=15, font=("Arial", 20), command=opnieuw)
+    btn2 = Button(denied, text='handmatig', height=3, width=15, font=("Arial", 20), command=handmatig)
+    btn.place(x=140, y=200, anchor="c")
+    btn2.place(x=410, y=200, anchor="c")
     mainloop()
 
 
@@ -192,5 +255,6 @@ def exit_screen():
 
 while True:
     start_screen()
+    check_screen()
     invoer_kenteken_screen()
 
