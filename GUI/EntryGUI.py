@@ -14,10 +14,14 @@ buttons = [
 invoer = []
 car = None
 
+# TODO: variable "kenteken" -> "licenseplate"
+
+
 def select(value):
     """"
-    Functie van de keyboard code, pakt de input en voegt deze toe aan list(invoer)
+    Keyboard function. Takes de input and adds it to list(input)
     """
+    # TODO: variable "invoer" -> "input"
     if value == "BACK":
         entry.delete(len(entry.get()) - 1, END)
         invoer.pop()
@@ -31,24 +35,23 @@ def select(value):
         invoer.append(value)
         print(invoer)
 
-
+# TODO: def check_kenteken() -> def check_licenseplace()
 def check_kenteken():
-    # TODO: check of kenteken via Image Text Recognition gevonden kan worden
     """"
-    Check of de Image Text Recognition een kenteken heeft gevonden
+    Check if the Image Text Recognition found a license plate
     """
     global kenteken
     kenteken = recognize.extract(config.imagePointer)
     #TODO: RegEX check
-    if len(kenteken) > 7:  # Geen kenteken gevonden
-        return found_screen(kenteken)  # Kenteken gevonden
+    if len(kenteken) > 7:
+        return found_screen(kenteken)
     else:
         return not_found_screen()
 
+
 def check_rdw():
-    # TODO: check of kenteken toegestaan is mbv RDW API
     """"
-    Check of de kenteken toegestaan is
+    Check if the license plate is allowed
     """
     global kenteken
     print(kenteken)
@@ -65,7 +68,7 @@ def check_rdw():
 
 def start_screen():
     """"
-    scherm: Start scherm
+    Screen: Start
     String: Welkom
     Button: Start
     """""
@@ -85,7 +88,7 @@ def start_screen():
 
 def check_screen():
     """"
-    scherm: Kenteken checken
+    Screen: license plate check
     String: Kenteken scannen...
     Sleep: 8 seconden
     """""
@@ -106,7 +109,7 @@ def check_screen():
 
 def not_allowed_screen():
     """"
-    Scherm: Kenteken niet toegestaan
+    Screen: License plate not allowed
     String: Helaas, uw voertuig voldoent niet aan de eisen...
     Sleep: 8 seconden
     """
@@ -128,7 +131,7 @@ def not_allowed_screen():
 
 def found_screen(kenteken):
     """"
-    Scherm: Kenteken gevonden
+    Screen: License plate found
     String: Kenteken: XX-XX-XX
             is dit juist?
     Button: Ja
@@ -138,7 +141,7 @@ def found_screen(kenteken):
     found.title('EntryGUI')
     found.geometry('550x300+100+100')
     found.configure(background='white')
-    w = Label(found, text="Kenteken: "+ kenteken, font=("Arial", 20), background="white")
+    w = Label(found, text="Kenteken: " + kenteken, font=("Arial", 20), background="white")
     w.pack(side='top')
     k = Label(found, text='Is dit juist?', font=("Arial", 20), background="white")
     k.pack(side='top')
@@ -160,7 +163,7 @@ def found_screen(kenteken):
 
 def not_found_screen():
     """"
-    Scherm: Kenteken NIET gevonden
+    Screen: License plate NOT found
     String: Kenteken niet gevonden
     Button: Opnieuw
             Handmatig
@@ -172,16 +175,16 @@ def not_found_screen():
     w = Label(denied, text="Kenteken niet gevonden", font=("Arial", 20), background="white")
     w.pack(side='top')
 
-    def handmatig():
+    def manual():
         denied.destroy()
         handmatig_screen()
 
-    def opnieuw():
+    def retry():
         denied.destroy()
         check_screen()
 
-    btn = Button(denied, text='Opnieuw', height=3, width=15, font=("Arial", 20), command=opnieuw)
-    btn2 = Button(denied, text='handmatig', height=3, width=15, font=("Arial", 20), command=handmatig)
+    btn = Button(denied, text='Opnieuw', height=3, width=15, font=("Arial", 20), command=retry)
+    btn2 = Button(denied, text='handmatig', height=3, width=15, font=("Arial", 20), command=manual)
     btn.place(x=140, y=200, anchor="c")
     btn2.place(x=410, y=200, anchor="c")
     mainloop()
@@ -189,12 +192,13 @@ def not_found_screen():
 
 def handmatig_screen():
     """"
-    Scherm: Handmatig kenteken invoeren
+    Screen: Manual input of license plate
     String: Kenteken:
     Button: Keyboard layout
             Annuleren
             Bevestigen
     """
+    # TODO: variable "invoer" -> "input"
     global invoer
     invoer = []
     kb = Tk()
@@ -257,7 +261,7 @@ def handmatig_screen():
 
 def entry_screen():
     """"
-    Scherm: Entry scherm
+    Screen: Entry
     String: U kunt inrijden
     Sleep: 8 seconden
     """
@@ -280,4 +284,3 @@ while True:
     start_screen()
     check_screen()
     check_kenteken()
-    # TODO: variabele kenteken moet in de database worden geplaatst + check of hij aan eerder account gekoppeld is

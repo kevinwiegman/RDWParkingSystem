@@ -13,10 +13,14 @@ kentekenbuttons = [
 invoer = []
 car = ''
 
+# TODO: variable "kenteken" -> "licenseplate"
+
+
 def select(value):
     """"
-    Functie van de keyboard code, pakt de input en voegt deze toe aan list(invoer)
+    Keyboard function. Takes de input and adds it to list(input)
     """
+    # TODO: variable "invoer" -> "input"
     if value == "BACK":
         entry.delete(len(entry.get()) - 1, END)
         invoer.pop()
@@ -30,26 +34,25 @@ def select(value):
         invoer.append(value)
         print(invoer)
 
-
+# TODO: def check_kenteken() -> def check_licenseplace()
 def check_kenteken():
-    # TODO: check of kenteken via Image Text Recognition gevonden kan worden
     """"
-    Check of de Image Text Recognition een kenteken heeft gevonden
+    Check if the Image Text Recognition found a license plate
     """
     global kenteken
     kenteken = recognize.extract(config.imagePointer)
     #TODO: RegEX check
     print(len(kenteken))
-    if len(kenteken) >= 7:  # Geen kenteken gevonden
-        return found_screen(kenteken) # Kenteken gevonden
+    if len(kenteken) >= 7:
+        return found_screen(kenteken)
     else:
         return not_found_screen()
 
+# TODO: def check_kenteken_database() -> def check_licenseplace_database()
 def check_kenteken_database(kenteken):
     """"
-    Check of het kenteken in de huidige kenteken database aanwezig is
+    Check if the license plate is existing in the "Log" database
     """
-    # TODO: Kenteken in huidige database zoeken
     db = Database()
     print(kenteken)
     if db.get_unreleased_car_record_by_number_plate(kenteken) is not None:
@@ -60,11 +63,9 @@ def check_kenteken_database(kenteken):
 
 def check_payed(kenteken):
     """"
-    Functie die checkt of er betaald is
+    Function which checks if customer payed
     """
-    # TODO: Check of er betaald is
-    betaald = False  # test
-
+    # TODO: Check if payed
     db = Database()
     car = db.get_car_by_number_plate(kenteken)
     if car.is_paid():
@@ -75,12 +76,12 @@ def check_payed(kenteken):
 
 def start_screen():
     """"
-    scherm: Start scherm
+    Screen: Start
     String: Welkom
     Button: Start
     """""
     start = Tk()
-    start.title('PayGUI')
+    start.title('ExitGUI')
     start.geometry('550x300+100+100')
     start.configure(background='white')
     start.columnconfigure(1, minsize=150)
@@ -95,12 +96,12 @@ def start_screen():
 
 def check_screen():
     """"
-    scherm: Kenteken checken
+    Screen: License plate check
     String: Kenteken scannen...
     Sleep: 8 seconden
     """""
     checkscreen = Tk()
-    checkscreen.title('EntryGUI')
+    checkscreen.title('ExitGUI')
     checkscreen.geometry('550x300+100+100')
     checkscreen.configure(background='white')
 
@@ -116,45 +117,46 @@ def check_screen():
 
 def not_found_screen():
     """"
-    Scherm: Kenteken NIET gevonden
+    Screen: License plate NOT found
     String: Kenteken niet gevonden
     Button: Opnieuw
             Handmatig
     """
     denied = Tk()
-    denied.title('EntryGUI')
+    denied.title('ExitGUI')
     denied.geometry('550x300+100+100')
     denied.configure(background='white')
     w = Label(denied, text="Kenteken niet gevonden", font=("Arial", 20), background="white")
     w.pack(side='top')
 
-    def handmatig():
+    def manual():
         denied.destroy()
         invoer_kenteken_screen()
 
-    def opnieuw():
+    def retry():
         denied.destroy()
         check_screen()
 
-    btn = Button(denied, text='Opnieuw', height=3, width=15, font=("Arial", 20), command=opnieuw)
-    btn2 = Button(denied, text='handmatig', height=3, width=15, font=("Arial", 20), command=handmatig)
+    btn = Button(denied, text='Opnieuw', height=3, width=15, font=("Arial", 20), command=retry)
+    btn2 = Button(denied, text='handmatig', height=3, width=15, font=("Arial", 20), command=manual)
     btn.place(x=140, y=200, anchor="c")
     btn2.place(x=410, y=200, anchor="c")
     mainloop()
 
-
+# TODO: def invoer_kenteken_screen() -> def invoer_licenseplate_screen()
 def invoer_kenteken_screen():
     """"
-    Scherm: kenteken invoeren
+    Screen: Insert license plate
     String: Kenteken:
     Button: Keyboard layout
             Annuleren
             Bevestigen
     """
+    # TODO: variable "invoer" -> "input"
     global invoer
     invoer = []
     kb = Tk()
-    kb.title("PayGUI")
+    kb.title("ExitGUI")
     kb.geometry('550x300+100+100')
     kb.resizable(0, 0)
     kb.configure(background='white')
@@ -213,14 +215,14 @@ def invoer_kenteken_screen():
 
 def found_screen(kenteken):
     """"
-    Scherm: Kenteken gevonden
+    Screen: License plate found
     String: Kenteken: XX-XX-XX
             is dit juist?
     Button: Ja
             Handmatig
     """
     found = Tk()
-    found.title('EntryGUI')
+    found.title('ExitGUI')
     found.geometry('550x300+100+100')
     found.configure(background='white')
     w = Label(found, text="Kenteken: "+ kenteken, font=("Arial", 20), background="white")
@@ -228,7 +230,7 @@ def found_screen(kenteken):
     k = Label(found, text='Is dit juist?', font=("Arial", 20), background="white")
     k.pack(side='top')
 
-    def handmatig():
+    def manual():
         found.destroy()
         invoer_kenteken_screen()
 
@@ -237,20 +239,20 @@ def found_screen(kenteken):
         return check_kenteken_database(kenteken)
 
     btn = Button(found, text='Ja', height=3, width=15, font=("Arial", 20), command=entry)
-    btn2 = Button(found, text='Handmatig', height=3, width=15, font=("Arial", 20), command=handmatig)
+    btn2 = Button(found, text='Handmatig', height=3, width=15, font=("Arial", 20), command=manual)
     btn.place(x=140, y=200, anchor="c")
     btn2.place(x=410, y=200, anchor="c")
     mainloop()
 
-
+# TODO: def kenteken_not_known_screen() -> def licenseplate_not_known_screen()
 def kenteken_not_known_screen():
     """"
-    Scherm: Kenteken is niet gevonden
+    Screen: License plate NOT found
     String: Kenteken niet gevonden
     Button: Opnieuw
     """
     notknown = Tk()
-    notknown.title('PayGUI')
+    notknown.title('ExitGUI')
     notknown.geometry('550x300+100+100')
     notknown.configure(background='white')
     w = Label(notknown, text="Kenteken niet gevonden", font=("Arial", 20), background="white")
@@ -261,12 +263,12 @@ def kenteken_not_known_screen():
 
 def not_payed_screen():
     """"
-    Scherm: Niet betaald
+    Screen: Not payed
     String: U heeft nog niet betaald, ga terug
     Sleep: 6 seconden
     """
     notpayedscreen = Tk()
-    notpayedscreen.title('EntryGUI')
+    notpayedscreen.title('ExitGUI')
     notpayedscreen.geometry('550x300+100+100')
     notpayedscreen.configure(background='white')
     w = Label(notpayedscreen, text="U heeft nog niet betaald, ga terug", font=("Arial", 20), background="white")
@@ -277,12 +279,12 @@ def not_payed_screen():
 
 def exit_screen():
     """"
-    Scherm: exit scherm
+    Screen: Exit
     String: U kunt uitrijden
     Sleep: 6 seconden
     """
     exitscreen = Tk()
-    exitscreen.title('EntryGUI')
+    exitscreen.title('ExitGUI')
     exitscreen.geometry('550x300+100+100')
     exitscreen.configure(background='white')
     w = Label(exitscreen, text="U kunt uitrijden", font=("Arial", 20), background="white")
