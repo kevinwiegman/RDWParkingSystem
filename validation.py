@@ -1,7 +1,7 @@
 import re
 
 class NumberPlate:
-    # UP TO DATE AS OF 11/6/2017, no container present so use at your own discretion
+    # UP TO DATE AS OF 11/6/2017, no maintainer present so use at your own discretion
     def __init__(self, number_plate, validity_check=False):
         self.__number_plate = number_plate
         self.__valid_number_plate = None
